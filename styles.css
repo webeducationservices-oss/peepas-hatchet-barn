@@ -1041,6 +1041,82 @@ nav.scrolled .nav-logo img { height: 46px; }
 }
 
 /* ==========================================================================
+   REVIEWS
+   ========================================================================== */
+.reviews-section {
+  padding: 8rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.reviews-summary {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+.reviews-summary .stars {
+  display: inline-flex;
+  gap: 0.25rem;
+  font-size: 1.5rem;
+  color: var(--amber);
+  margin: 0.5rem 0;
+}
+.reviews-summary .rating-text {
+  color: var(--cream);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+.reviews-summary .count {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+.review-card {
+  background: var(--dark-card);
+  border: 1px solid rgba(245, 240, 232, 0.05);
+  border-radius: var(--radius-md);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+.review-card .review-stars {
+  color: var(--amber);
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  letter-spacing: 2px;
+}
+.review-card .review-text {
+  color: var(--cream-dark);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+  flex: 1;
+}
+.review-card .review-author {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 1rem;
+}
+.review-card .author-name {
+  color: var(--cream);
+  font-weight: 600;
+}
+.review-card .author-date {
+  margin-left: auto;
+  font-size: 0.8rem;
+}
+.reviews-cta {
+  text-align: center;
+  margin-top: 3rem;
+}
+
+/* ==========================================================================
    FORMS
    ========================================================================== */
 .form-section {
