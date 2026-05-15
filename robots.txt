@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Disallow: /waiver/
+Disallow: /thank-you/
+
+Sitemap: https://www.peepasgaragehatchetbarn.com/sitemap.xml
