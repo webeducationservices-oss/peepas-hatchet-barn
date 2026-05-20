@@ -10,7 +10,21 @@
 
   const FORM_NOTIFY_ENDPOINT = 'https://myaieditor.com/api/form-notify';
   const SITE_SLUG = 'peepas-hatchet-barn';
-  const RECAPTCHA_SITE_KEY = window.__RECAPTCHA_SITE_KEY__ || ''; // injected per-page if needed
+  // Shared WES reCAPTCHA v3 site key. Server-side verification happens in form-notify.
+  const RECAPTCHA_SITE_KEY = window.__RECAPTCHA_SITE_KEY__ || '6Lck8aQsAAAAALMA-T6nwfkSf7bv4K-mOhkszeKh';
+
+  /** Inject the reCAPTCHA v3 script tag once, only if there's a form on this page. */
+  function injectRecaptcha() {
+    if (!RECAPTCHA_SITE_KEY) return;
+    if (document.querySelector('script[data-recaptcha]')) return;
+    if (!document.querySelector('form[data-form-type]')) return;
+    const s = document.createElement('script');
+    s.src = `https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}`;
+    s.async = true;
+    s.defer = true;
+    s.setAttribute('data-recaptcha', '1');
+    document.head.appendChild(s);
+  }
 
   /* -------------------------------------------------------------------------- */
   /* Nav: scroll effect + mobile toggle                                          */
@@ -224,15 +238,15 @@
   /* -------------------------------------------------------------------------- */
   /* Init                                                                        */
   /* -------------------------------------------------------------------------- */
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      initNav();
-      initForms();
-      initSignaturePad();
-    });
-  } else {
+  function init() {
     initNav();
     initForms();
     initSignaturePad();
+    injectRecaptcha();
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
   }
 })();
