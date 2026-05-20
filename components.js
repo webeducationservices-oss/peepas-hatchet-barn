@@ -13,9 +13,19 @@
   // Shared WES reCAPTCHA v3 site key. Server-side verification happens in form-notify.
   const RECAPTCHA_SITE_KEY = window.__RECAPTCHA_SITE_KEY__ || '6Lck8aQsAAAAALMA-T6nwfkSf7bv4K-mOhkszeKh';
 
-  /** Inject the reCAPTCHA v3 script tag once, only if there's a form on this page. */
+  /** Hostnames where reCAPTCHA is enabled. Skips it on staging URLs (Vercel previews)
+   *  so we don't get the "Invalid domain for site key" error in the corner.
+   *  Add the production hostname back here once DNS cuts over. */
+  const RECAPTCHA_ALLOWED_HOSTS = [
+    'peepasgaragehatchetbarn.com',
+    'www.peepasgaragehatchetbarn.com',
+  ];
+
+  /** Inject the reCAPTCHA v3 script tag once, only if there's a form on this page
+   *  AND we're on a hostname registered with the reCAPTCHA key. */
   function injectRecaptcha() {
     if (!RECAPTCHA_SITE_KEY) return;
+    if (!RECAPTCHA_ALLOWED_HOSTS.includes(window.location.hostname)) return;
     if (document.querySelector('script[data-recaptcha]')) return;
     if (!document.querySelector('form[data-form-type]')) return;
     const s = document.createElement('script');
