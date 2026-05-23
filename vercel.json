@@ -27,7 +27,7 @@
     { "source": "/Pages/desktop/:slug*", "destination": "/:slug*", "permanent": true },
     { "source": "/Pages/mobile/:slug*", "destination": "/:slug*", "permanent": true },
     { "source": "/Pages/tablet/:slug*", "destination": "/:slug*", "permanent": true },
-    { "source": "/food-trucks", "destination": "https://www.peepasgaragecraftbrewery.com/food", "permanent": true },
-    { "source": "/food-trucks/:path*", "destination": "https://www.peepasgaragecraftbrewery.com/food", "permanent": true }
+    { "source": "/food-trucks{/}?", "destination": "https://www.peepasgaragecraftbrewery.com/food", "permanent": true },
+    { "source": "/food-trucks/:path+", "destination": "https://www.peepasgaragecraftbrewery.com/food", "permanent": true }
   ]
 }
