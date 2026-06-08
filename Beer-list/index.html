@@ -15,6 +15,34 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
+  <style>
+    /* Untappd live tap list embed — same menu as the Craft Brewery (Brewery 39225 / Menu 152407) */
+    .tap-embed-wrap {
+      margin-top: 3rem;
+      background: var(--cream);
+      border-radius: var(--radius-md);
+      padding: 2rem 1.5rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      min-height: 400px;
+    }
+    #menu-container {
+      min-height: 360px;
+      color: #2a2a2a;
+    }
+    /* Soften the Untappd widget's heaviest defaults to fit our look */
+    #menu-container * { font-family: 'Inter', sans-serif !important; }
+    #menu-container h1, #menu-container h2, #menu-container h3,
+    #menu-container .beer-name, #menu-container .item-name {
+      font-family: 'Bebas Neue', sans-serif !important;
+      letter-spacing: 1px;
+    }
+    .tap-loading {
+      text-align: center;
+      color: var(--text-muted);
+      font-style: italic;
+      padding: 2rem 0;
+    }
+  </style>
   <script src="/components.js" defer></script>
   <!-- Google Consent Mode (before GTM) -->
   <script>
@@ -51,54 +79,38 @@
 
   <main id="main">
     <section class="subhero">
-      <span class="subhero-tag">What's On Tap</span>
+      <span class="subhero-tag">Live Tap List · Updates Automatically</span>
       <h1>Pee-Pa's <span class="accent">Beer List</span></h1>
-      <p>Over 20 craft beers brewed in-house at Pee-Pa's Garage Craft Brewery — perfect alongside your axe throwing session. Selection rotates seasonally.</p>
+      <p>Pulled live from our Untappd brewery account. When Andrew taps a new keg, this list updates itself — what you see here is what's pouring right now, perfect alongside your axe throwing session.</p>
     </section>
 
-    <section class="beer-list-section">
-      <div class="beer-grid">
-        <div class="beer-card">
-          <div class="style">India Pale Ale</div>
-          <h3>Rotating IPA Series</h3>
-          <span class="abv">Hop Forward</span>
-          <p>Bold, hop-forward IPAs rotating throughout the season. From West Coast bitter to hazy New England — ask the bar what's pouring today.</p>
-        </div>
-        <div class="beer-card">
-          <div class="style">American Lager</div>
-          <h3>Garage Lager</h3>
-          <span class="abv">Easy</span>
-          <p>Crisp, clean, easy-drinking lager. Perfect for between throws — won't slow your axe down.</p>
-        </div>
-        <div class="beer-card">
-          <div class="style">Stout</div>
-          <h3>Seasonal Stout</h3>
-          <span class="abv">Bold</span>
-          <p>Rich and roasted with notes of chocolate and coffee. A winter favorite that sticks around for fall and spring too.</p>
-        </div>
-        <div class="beer-card">
-          <div class="style">American Wheat</div>
-          <h3>Florida Wheat</h3>
-          <span class="abv">Refreshing</span>
-          <p>Light, bright, and citrusy. Built for Florida heat and a long Saturday at the Hatchet Barn.</p>
-        </div>
-        <div class="beer-card">
-          <div class="style">Pale Ale</div>
-          <h3>Pinellas Pale</h3>
-          <span class="abv">Balanced</span>
-          <p>Easy-drinking American pale ale with a smooth bitterness and clean finish. A go-to for the regulars.</p>
-        </div>
-        <div class="beer-card">
-          <div class="style">Brown Ale</div>
-          <h3>Wood Shed Brown</h3>
-          <span class="abv">Smooth</span>
-          <p>Toasted malt, caramel, and a touch of nuttiness. Pairs perfectly with a burger from the Wood Shed Grill.</p>
+    <section class="beer-list-section" aria-label="Live tap list">
+      <div class="tap-embed-wrap">
+        <div id="menu-container">
+          <p class="tap-loading">Loading our live tap list from Untappd…</p>
         </div>
       </div>
+      <script type="text/javascript">
+        // Untappd Embed Menu, loads live tap list from the brewery account
+        // Brewery ID: 39225 · Menu ID: 152407 (same menu as peepasgaragecraftbrewery.com)
+        !function getScript(e, t) {
+          var a = document.createElement("script"),
+              n = document.getElementsByTagName("script")[0];
+          a.async = 1;
+          n.parentNode.insertBefore(a, n);
+          a.onload = a.onreadystatechange = function (e, n) {
+            (n || !a.readyState || /loaded|complete/.test(a.readyState)) &&
+              (a.onload = a.onreadystatechange = null, a = undefined, n || t && t())
+          };
+          a.src = e
+        }("https://embed-menu-preloader.untappdapi.com/embed-menu-preloader.min.js", function () {
+          PreloadEmbedMenu("menu-container", 39225, 152407)
+        });
+      </script>
 
       <div style="background: var(--dark-card); border-radius: var(--radius-md); padding: 2rem; margin-top: 3rem; text-align: center;">
         <p style="color: var(--cream-dark); font-size: 1.05rem; margin-bottom: 1rem;">Our taps rotate often — what's pouring today might not be on tomorrow.</p>
-        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Stop by to see the current list, or check out the full lineup at our sister site.</p>
+        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">See the full lineup, brewery story, and distillery at our sister site.</p>
         <a href="https://www.peepasgaragecraftbrewery.com/" target="_blank" rel="noopener" class="btn btn-primary">Visit the Craft Brewery</a>
       </div>
     </section>
