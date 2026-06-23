@@ -813,6 +813,97 @@ nav.scrolled .nav-logo img { height: 46px; }
 }
 
 /* ==========================================================================
+   ARCADE GAMING
+   ========================================================================== */
+.arcade-section {
+  position: relative;
+  padding: 6rem 2rem;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(212, 133, 31, 0.12) 0%, transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(139, 58, 26, 0.18) 0%, transparent 45%),
+    var(--dark-surface);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.arcade-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: center;
+}
+.arcade-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--dark);
+  background: var(--amber);
+  padding: 0.45rem 1.4rem;
+  border-radius: 50px;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+}
+.arcade-section h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  letter-spacing: 2px;
+  line-height: 1.05;
+  margin-bottom: 1.25rem;
+}
+.arcade-emoji {
+  display: inline-block;
+  margin-left: 0.25rem;
+  animation: arcadeWiggle 2.5s ease-in-out infinite;
+}
+.arcade-lead {
+  color: var(--cream-dark);
+  font-size: 1.1rem;
+  line-height: 1.7;
+  max-width: 720px;
+  margin: 0 auto 3rem;
+}
+.arcade-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+  text-align: left;
+}
+.arcade-card {
+  background: rgba(15, 15, 15, 0.55);
+  border: 1px solid rgba(245, 240, 232, 0.06);
+  border-radius: var(--radius-md);
+  padding: 2rem;
+  transition: border-color 0.3s, transform 0.3s;
+}
+.arcade-card:hover {
+  border-color: var(--border-amber);
+  transform: translateY(-4px);
+}
+.arcade-icon {
+  font-size: 2.4rem;
+  margin-bottom: 1rem;
+}
+.arcade-card h3 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: 1.5px;
+  margin-bottom: 0.6rem;
+}
+.arcade-card p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+@keyframes arcadeWiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-12deg); }
+  75% { transform: rotate(12deg); }
+}
+
+/* ==========================================================================
    IMAGE BREAK / QUOTE
    ========================================================================== */
 .image-break {
@@ -1760,6 +1851,7 @@ footer {
     margin: 0 auto;
   }
   .friday-perks { display: inline-block; text-align: left; }
+  .arcade-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 768px) {
