@@ -5,3 +5,4 @@ Disallow: /waiver/
 Disallow: /thank-you/
 
 Sitemap: https://www.peepasgaragehatchetbarn.com/sitemap.xml
+# LLM guide: https://www.peepasgaragehatchetbarn.com/llms.txt
