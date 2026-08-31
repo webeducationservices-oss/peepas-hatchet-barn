@@ -51,7 +51,10 @@
     }
 
     if (toggle && navLinks) {
-      toggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+      toggle.addEventListener('click', () => {
+        const open = navLinks.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
     }
 
     // Close mobile nav and smooth-scroll for on-page anchors
