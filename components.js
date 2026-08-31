@@ -133,7 +133,14 @@
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      // form-notify answers 200 with {accepted:false} for rejected/blocked
+      // submissions (low reCAPTCHA score, spam blocklist, honeypot), so
+      // res.ok alone is NOT enough — a real lead would be silently dropped
+      // while the visitor is told it went through. Success must be earned.
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || json.accepted === false) {
+        throw new Error(`rejected: ${json.reason || `HTTP ${res.status}`}`);
+      }
 
       // Redirect to thank-you if configured, else show success message in-place
       const redirect = form.dataset.thankYou;
@@ -148,7 +155,7 @@
       if (sig && sig._clearSignature) sig._clearSignature();
     } catch (err) {
       console.error('Form submit failed', err);
-      showStatus(form, 'error', form.dataset.errorMessage || 'Something went wrong. Please call us at 727-526-6251.');
+      showStatus(form, 'error', form.dataset.errorMessage || 'We could not submit that. Please call us at 727-526-6251 and we will take your details.');
     } finally {
       if (submitBtn) {
         submitBtn.disabled = false;
