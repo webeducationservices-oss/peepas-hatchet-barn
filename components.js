@@ -51,9 +51,45 @@
     }
 
     if (toggle && navLinks) {
-      toggle.addEventListener('click', () => {
-        const open = navLinks.classList.toggle('open');
+      // Scrim lives on <body> so it covers the page but sits under the drawer.
+      const backdrop = document.createElement('div');
+      backdrop.className = 'nav-backdrop';
+      backdrop.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(backdrop);
+
+      const setMenu = (open) => {
+        navLinks.classList.toggle('open', open);
+        backdrop.classList.toggle('show', open);
+        document.body.classList.toggle('menu-open', open);
+        if (navbar) navbar.classList.toggle('menu-open', open);
         toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      };
+      const closeMenu = ({ refocus } = {}) => {
+        if (!navLinks.classList.contains('open')) return;
+        setMenu(false);
+        if (refocus) toggle.focus();
+      };
+
+      // Correct label before the first interaction, not just after it.
+      toggle.setAttribute('aria-label', 'Open menu');
+      toggle.setAttribute('aria-controls', 'navLinks');
+
+      toggle.addEventListener('click', () => {
+        setMenu(!navLinks.classList.contains('open'));
+      });
+
+      // Every way out: the X, the scrim, Escape, picking a link.
+      backdrop.addEventListener('click', () => closeMenu({ refocus: true }));
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeMenu({ refocus: true });
+      });
+      navLinks.querySelectorAll('a').forEach((a) => {
+        a.addEventListener('click', () => closeMenu());
+      });
+      // Resizing past the breakpoint must not strand the body scroll lock.
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 1100) closeMenu();
       });
     }
 
@@ -66,7 +102,6 @@
         if (target) {
           e.preventDefault();
           target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          if (navLinks) navLinks.classList.remove('open');
         }
       });
     });

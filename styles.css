@@ -157,19 +157,55 @@ nav.scrolled .nav-logo img { height: 46px; }
 .mobile-toggle {
   display: none;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 5px;
   cursor: pointer;
   background: none;
   border: none;
   padding: 0.5rem;
+  /* Sits above the drawer so the same button always closes it.
+     Without this the open drawer paints over the toggle and traps the user. */
+  position: relative;
+  z-index: 1002;
+  width: 44px;
+  height: 44px;
+  -webkit-tap-highlight-color: transparent;
 }
 .mobile-toggle span {
-  width: 28px;
+  width: 26px;
   height: 2px;
   background: var(--cream);
-  transition: 0.3s;
+  border-radius: 2px;
   display: block;
+  transform-origin: center;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
 }
+/* Hamburger morphs into an X while the drawer is open */
+.mobile-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.mobile-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.mobile-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Scrim behind the drawer. Injected by components.js, tap it to close. */
+.nav-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 10, 0.68);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+  z-index: 999;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+.nav-backdrop.show { opacity: 1; visibility: visible; }
+body.menu-open { overflow: hidden; }
+/* A filtered ancestor becomes the containing block for its fixed children,
+   which would re-anchor the drawer to the nav. Drop the blur while it is open. */
+nav.scrolled.menu-open { backdrop-filter: none; -webkit-backdrop-filter: none; }
 
 /* ==========================================================================
    HERO
@@ -1860,18 +1896,80 @@ footer {
   .nav-links {
     position: fixed;
     top: 0;
-    right: -100%;
-    width: 80%;
-    max-width: 350px;
+    right: 0;
+    width: min(86%, 360px);
     height: 100vh;
-    background: var(--dark-surface);
+    height: 100dvh;
+    background: linear-gradient(180deg, var(--dark-surface) 0%, var(--dark) 100%);
+    border-left: 1px solid rgba(212, 148, 48, 0.28);
     flex-direction: column;
-    padding: 5rem 2rem;
-    transition: right 0.4s;
-    box-shadow: -10px 0 40px rgba(0,0,0,0.5);
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 0;
+    padding: 5.5rem 1.6rem 2.5rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    z-index: 1001;
+    /* transform animates on the compositor; `right` does not */
+    transform: translateX(100%);
+    transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow: -24px 0 60px rgba(0, 0, 0, 0.55);
   }
-  .nav-links.open { right: 0; }
+  .nav-links.open { transform: translateX(0); }
+
+  .nav-links li { width: 100%; }
+
+  .nav-links a {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 52px;            /* comfortable tap target */
+    font-size: 0.95rem;
+    letter-spacing: 2px;
+    border-bottom: 1px solid rgba(245, 240, 232, 0.07);
+    /* links reveal after the panel lands */
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  .nav-links a::after { display: none; }   /* desktop underline off in the drawer */
+  .nav-links a[aria-current="page"] { color: var(--amber); }
+
+  .nav-links.open a {
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), color 0.25s ease;
+  }
+  .nav-links.open li:nth-child(1) a { transition-delay: 0.10s; }
+  .nav-links.open li:nth-child(2) a { transition-delay: 0.15s; }
+  .nav-links.open li:nth-child(3) a { transition-delay: 0.20s; }
+  .nav-links.open li:nth-child(4) a { transition-delay: 0.25s; }
+  .nav-links.open li:nth-child(5) a { transition-delay: 0.30s; }
+  .nav-links.open li:nth-child(6) a { transition-delay: 0.35s; }
+  .nav-links.open li:nth-child(7) a { transition-delay: 0.40s; }
+  .nav-links.open li:nth-child(8) a { transition-delay: 0.45s; }
+
+  /* Book Now reads as the primary action, not another list row */
+  .nav-links .nav-cta {
+    justify-content: center;
+    margin-top: 1.75rem;
+    min-height: 54px;
+    border-bottom: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem !important;
+    letter-spacing: 2px !important;
+  }
+
   .mobile-toggle { display: flex; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-links,
+  .nav-links.open a,
+  .nav-backdrop,
+  .mobile-toggle span {
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
 }
 
 @media (max-width: 768px) {
