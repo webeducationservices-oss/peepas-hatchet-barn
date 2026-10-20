@@ -369,6 +369,28 @@
     });
   }
 
+  /** Registration clicks, matching the brewery site so both report into the
+   *  same GTM event and the Brawl can be measured across the two domains.
+   *  One delegated listener covers every register link, including the popup's,
+   *  which is created after load. */
+  function initPromoTracking() {
+    document.addEventListener('click', function (e) {
+      const a = e.target.closest && e.target.closest('a[href*="' + PROMO.url + '"]');
+      if (!a) return;
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'brawl_register_click',
+        register_location: a.getAttribute('data-register') ||
+          (a.closest('.promo-modal') ? 'popup'
+            : a.closest('.brawl-teaser') ? 'teaser'
+            : a.closest('.marathon-card') ? 'events_page'
+            : a.closest('main') ? 'brawl_page' : 'other'),
+        page_path: location.pathname,
+        site: 'hatchet-barn'
+      });
+    }, true);
+  }
+
   /* -------------------------------------------------------------------------- */
   /* Init                                                                        */
   /* -------------------------------------------------------------------------- */
@@ -379,6 +401,7 @@
     injectRecaptcha();
     initPromoExpiry();
     initPromoPopup();
+    initPromoTracking();
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
