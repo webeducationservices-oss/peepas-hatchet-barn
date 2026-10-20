@@ -291,6 +291,85 @@
   }
 
   /* -------------------------------------------------------------------------- */
+  /* Timed promo: Barnyard Brawl                                                 */
+  /* -------------------------------------------------------------------------- */
+  /** ONE switch for the whole promo. Everything below keys off this.
+   *  ENDS_AT is the moment it all disappears: midnight Eastern starting Nov 16,
+   *  the day after the tournament ends. -05:00 because Nov 16 is EST, not EDT.
+   *  To pull the promo early, set ENDS_AT to a past date. To kill only the
+   *  popup but keep the pages, set SHOW_POPUP to false. */
+  const PROMO = {
+    id: 'barnyard-brawl',
+    endsAt: new Date('2026-11-16T00:00:00-05:00'),
+    showPopup: true,
+    url: 'https://book.peek.com/s/b0f8c26d-0654-4560-86cd-b89c5f47114c/OvZoR',
+    page: '/barnyard-brawl/',
+    flyer: '/images/barnyard-brawl-flyer.webp',
+  };
+
+  const promoIsLive = () => new Date() < PROMO.endsAt;
+
+  /** Strip every promo block once the date passes, so nothing has to be
+   *  hand-removed later. Blocks are in the HTML so they render with no flash
+   *  (and stay crawlable) while the promo is live. */
+  function initPromoExpiry() {
+    if (promoIsLive()) return;
+    document.querySelectorAll('[data-promo="' + PROMO.id + '"]').forEach((el) => el.remove());
+    document.querySelectorAll('[data-promo-expired="' + PROMO.id + '"]').forEach((el) => {
+      el.hidden = false;
+    });
+  }
+
+  function initPromoPopup() {
+    if (!PROMO.showPopup || !promoIsLive()) return;
+    // Never on the promo's own page, that is just in the way.
+    if (window.location.pathname.replace(/\/+$/, '/') === PROMO.page) return;
+    // Once per browser session, so it does not nag on every page view.
+    try {
+      if (sessionStorage.getItem('promo-seen-' + PROMO.id)) return;
+      sessionStorage.setItem('promo-seen-' + PROMO.id, '1');
+    } catch (e) { /* private mode: fall through and just show it once */ }
+
+    const overlay = document.createElement('div');
+    overlay.className = 'promo-modal';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', 'The Barnyard Brawl, November 13 to 15');
+    overlay.innerHTML =
+      '<div class="promo-modal-box">' +
+        '<button type="button" class="promo-close" aria-label="Close">&times;</button>' +
+        '<a class="promo-flyer-link" href="' + PROMO.page + '">' +
+          '<img src="' + PROMO.flyer + '" alt="The Barnyard Brawl, November 13 to 15, a WATL and WKTL local tournament at Pee-Pa\'s Garage Hatchet Barn" width="900" height="1200">' +
+        '</a>' +
+        '<div class="promo-actions">' +
+          '<a class="btn btn-primary" href="' + PROMO.url + '" target="_blank" rel="noopener">Register Now</a>' +
+          '<a class="btn btn-outline" href="' + PROMO.page + '">Event Details</a>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(overlay);
+
+    const close = () => {
+      overlay.classList.remove('show');
+      document.body.classList.remove('promo-open');
+      setTimeout(() => overlay.remove(), 320);
+      document.removeEventListener('keydown', onKey);
+    };
+    const onKey = (e) => { if (e.key === 'Escape') close(); };
+
+    overlay.querySelector('.promo-close').addEventListener('click', close);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+    document.addEventListener('keydown', onKey);
+    // Leaving for Peek or the detail page should not leave the scroll locked.
+    overlay.querySelectorAll('a').forEach((a) => a.addEventListener('click', close));
+
+    requestAnimationFrame(() => {
+      overlay.classList.add('show');
+      document.body.classList.add('promo-open');
+      overlay.querySelector('.promo-close').focus();
+    });
+  }
+
+  /* -------------------------------------------------------------------------- */
   /* Init                                                                        */
   /* -------------------------------------------------------------------------- */
   function init() {
@@ -298,6 +377,8 @@
     initForms();
     initSignaturePad();
     injectRecaptcha();
+    initPromoExpiry();
+    initPromoPopup();
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
